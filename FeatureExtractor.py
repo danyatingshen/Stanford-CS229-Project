@@ -4,7 +4,7 @@ import math
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
-MAX_NUM = 999
+MAX_NUM = 9999
 
 bins = defaultdict(lambda: [])
 
@@ -47,6 +47,19 @@ def count_zeros(val_1, val_2):
 
     return zero_count_1 + zero_count_2
 
+def non_trailing_zero_count(val_1, val_2):
+
+    total_zero_1 = str(val_1).count('0')
+    total_zero_2 = str(val_2).count('0')
+
+    num1_str = str(val_1)
+    num2_str = str(val_2)
+
+    trail_1 = len(num1_str) - len(num1_str.rstrip('0'))
+    trail_2 = len(num2_str) - len(num2_str.rstrip('0'))
+
+    return ((len(num1_str) - trail_1) == 1  and  (len(num2_str) - trail_2) == 1  and val_1 != 0 and val_2 != 0 and total_zero_1 != 0 and total_zero_2 != 0)
+
 
 def feature_extractor(val_1, val_2):
 
@@ -66,15 +79,25 @@ def feature_extractor(val_1, val_2):
     num_2_digit = len(str(val_2))
 
 
-    if int(val_1) ==0 or int(val_2) == 0:
-        zero_count = 'base'
-        num_1_digit = 'base'
-        num_2_digit = 'base'
-        carry_ops = 'base'
-
     #Count not leading zeros
+    trail = non_trailing_zero_count(val_1, val_2)
+    if trail:
+        isTrail = 'trailTrue'
+        zero_count = 'trailed'
+        num_1_digit = 'trailed'
+        num_2_digit = 'trailed'
 
-    feature = (num_1_digit, num_2_digit, carry_ops, zero_count)
+    else:
+        isTrail = 'trailFalse'
+
+    if int(val_1) ==0 or int(val_2) == 0:
+        num_1_digit = 'baseCase'
+        num_2_digit= 'baseCase'
+        carry_ops = 'baseCase'
+        zero_count = 'baseCase'
+
+    feature = (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
+
     return feature
 
 
