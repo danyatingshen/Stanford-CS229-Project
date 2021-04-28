@@ -4,7 +4,7 @@ import math
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
-MAX_NUM = 9999
+MAX_NUM = 999
 
 bins = defaultdict(lambda: [])
 
@@ -92,7 +92,7 @@ def feature_extractor(val_1, val_2):
 
     if int(val_1) ==0 or int(val_2) == 0:
         num_1_digit = 'baseCase'
-        num_2_digit= 'baseCase'
+        num_2_digit = 'baseCase'
         carry_ops = 'baseCase'
         zero_count = 'baseCase'
 
