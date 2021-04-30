@@ -60,24 +60,18 @@ def non_trailing_zero_count(val_1, val_2):
 
     return ((len(num1_str) - trail_1) == 1  and  (len(num2_str) - trail_2) == 1  and val_1 != 0 and val_2 != 0 and total_zero_1 != 0 and total_zero_2 != 0)
 
-
 def feature_extractor(val_1, val_2):
-
     #val2 will always be larger than val1
     if val_1 > val_2:
         temp = val_1
         val_1 = val_2
         val_2 = temp
 
-
-
     carry_ops = num_carry_ops(val_1,val_2)
     zero_count = count_zeros(val_1, val_2)
 
-
     num_1_digit = len(str(val_1))
     num_2_digit = len(str(val_2))
-
 
     #Count not leading zeros
     trail = non_trailing_zero_count(val_1, val_2)
@@ -93,8 +87,8 @@ def feature_extractor(val_1, val_2):
     if int(val_1) ==0 or int(val_2) == 0:
         num_1_digit = 'baseCase'
         num_2_digit = 'baseCase'
-        carry_ops = 'baseCase'
-        zero_count = 'baseCase'
+        carry_ops   = 'baseCase'
+        zero_count  = 'baseCase'
 
     feature = (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
 
