@@ -31,7 +31,7 @@ def feature_extractor(val_1, val_2):
     else:
         trail = 'trailFalse'
 
-    if int(val_1) == 0 or int(val_2) == 0:
+    if (val_1 == 0 or val_2 == 0) or (val_1 == 1 or val_2 == 1):
         num_1_digit = 'baseCase'
         num_2_digit = 'baseCase'
         #num_carry = 'baseCase'
