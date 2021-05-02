@@ -19,8 +19,8 @@ class MDP:
         for i in range(len(state[0])):
             increase = tuple(1 if i == j else 0 for j in range(len(state[0])))
             decrease = tuple(-1 if i == j else 0 for j in range(len(state[0])))
-            actions.add(((increase), state[1]))
-            actions.add(((decrease), state[1]))
+            actions.add((increase, state[1]))
+            actions.add((decrease, state[1]))
         return actions
 
 
