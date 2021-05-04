@@ -4,8 +4,12 @@ import math
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
-MAX_NUM = 999
+from random import random
 
+MAX_NUM = 999
+MAX_FEATURE_TUPLE = (-1,-1,-1,-1,'')
+MIN_FEATURE_TUPLE = (10000,10000,10000,10000,'')
+BASE_PROBLEM = ()
 bins = defaultdict(lambda: [])
 
 def num_carry_ops(val_1, val_2):
@@ -94,24 +98,39 @@ def feature_extractor(val_1, val_2):
 
     return feature
 
+def generate_bins_and_constants():
+    for num_1 in range(0, MAX_NUM + 1):
+        for num_2 in range(0, MAX_NUM + 1):
+            key = feature_extractor(num_1, num_2)
+            update_feature_constants(key)
+            bins[key].append((num_1, num_2))
+    return bins,MAX_FEATURE_TUPLE,MIN_FEATURE_TUPLE
 
-for num_1 in range(0, MAX_NUM + 1):
-    for num_2 in range(0, MAX_NUM + 1):
 
-        key = feature_extractor(num_1, num_2)
-        #print("Problem: " + str(num_1) + " + " + str(num_2) + " = ? is mapped to feature space as: " + str(key) )
+def update_feature_constants(key):
+    for index in range(len(key)) :
+        if key[index] > MAX_FEATURE_TUPLE[index]:
+            MAX_FEATURE_TUPLE[index] = key[index]
+        if key[index] < MIN_FEATURE_TUPLE[index]:
+            MIN_FEATURE_TUPLE[index] = key[index]
 
-        bins[key].append((num_1, num_2))
 
-# Bin statistics
-print("Total number of math problems: " + str( (MAX_NUM+1) ** 2) )
-print("Total number of bins: " + str( len(bins) ) )
-print("")
 
-for key in bins:
-    print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
-    print( bins[key][0:100])
+def show_statis():
+    # Bin statistics
+    print("Total number of math problems: " + str( (MAX_NUM+1) ** 2) )
+    print("Total number of bins: " + str( len(bins) ) )
     print("")
+
+    for key in bins:
+        print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
+        print( bins[key][0:100])
+        print("")
+
+def main():
+    generate_bins_and_constants()
+
+
 
 
 
