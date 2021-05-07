@@ -1,6 +1,6 @@
 # observed_states: (total digits, digit difference, ...... )
 # environment_states: (the actual problem associated with the observed states, number of problems passed, game_status: skip, quit, continue )
-# STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environement_states) )
+# STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environment_states) )
 import operator
 import random
 import FeatureExtractor
@@ -28,14 +28,14 @@ class MDP:
         observed_state, environment_state = state
         actions = {}
         for i in range(len(observed_state)):
-            stay = tuple([0 for _ in range(len(observed_state))])
-            actions.add((stay, environment_state))
+            stay = tuple([0] * len(observed_state))
+            actions.add(stay)
             if state < FeatureExtractor.self.MAX_FEATURE_TUPLE:
                 increase = tuple(1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add((increase, environment_state))
+                actions.add(increase)
             if state > FeatureExtractor.self.MIN_FEATURE_TUPLE:
                 decrease = tuple(-1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add((decrease, environment_state))
+                actions.add(decrease)
         return actions
 
     # Amanda
@@ -50,11 +50,11 @@ class MDP:
 
         raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
-    def next_sate(self,state, action):
+    def next_state(self, state, action):
         try:
             return tuple(map(operator.add, state, action))
         except:
-            print("exception next_sate")
+            print("exception next_state")
 
     def compare_tuple(self, a, b):
         for answer in [(a == b) for a, b in zip(a, b)]:
@@ -69,7 +69,7 @@ class MDP:
         if len(observed_states) != len(action):
             return
 
-        new_state = self.next_sate(observed_states, action)
+        new_state = self.next_state(observed_states, action)
         problem = self.create_problem(new_state)
         return zip(new_state, (problem, state[1][1] + 1, state[1][2]))
 
