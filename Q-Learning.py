@@ -4,23 +4,23 @@
 import operator
 import random
 import FeatureExtractor
-import json
+import re
 
 class Problem:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.operation = 'operation'
-        self.bins, self.MAX_FEATURE_TUPLE, self.MIN_FEATURE_TUPLE = FeatureExtractor.generate_bins_and_constants()
-        self.BASE_PROBLEM_KEY = (1, 3, 0, 1, 'trailFalse')
 
 class MDP:
     def __init__(self):
         self.temp = None
+        self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
+        self.BASE_PROBLEM_KEY = (1, 3, 0, 1, 'trailFalse')
 
     # Amanda
     def startState(self):
-        result = random.choice(FeatureExtractor.self.bins[self.BASE_PROBLEM_KEY])
+        result = random.choice(FeatureExtractor.bins[FeatureExtractor.BASE_PROBLEM_KEY])
         return Problem(result[0], result[1])
 
     # Cortney

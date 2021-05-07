@@ -8,7 +8,7 @@ from random import random
 
 MAX_NUM = 999
 FEATURE_TUPLE_LIMIT = list()
-BASE_PROBLEM = ()
+BASE_PROBLEM_KEY = ()
 bins = defaultdict(lambda: [])
 
 def num_carry_ops(val_1, val_2):
@@ -129,6 +129,7 @@ def save_json(dictionary):
 
 def main():
     bins,FEATURE_TUPLE_LIMIT = generate_bins_and_constants()
+    print(FEATURE_TUPLE_LIMIT)
 
 if __name__ == '__main__':
     main()
