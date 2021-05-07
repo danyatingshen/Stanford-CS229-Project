@@ -4,7 +4,6 @@
 import operator
 import random
 import FeatureExtractor
-import re
 
 
 class Problem:
@@ -25,32 +24,32 @@ class MDP:
     # Amanda
     def startState(self):
         result = random.choice(FeatureExtractor.bins[self.BASE_PROBLEM_KEY])
-        return zip(self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.game_status))
+        start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.game_status))
+        return start_state
 
     # Cortney
     def actions(self, state):
         observed_state, environment_state = state
-        actions = {}
+        actions = list()
         for i in range(len(observed_state)):
             stay = tuple([0] * len(observed_state))
-            actions.add(stay)
-            if state < FeatureExtractor.self.MAX_FEATURE_TUPLE:
+            actions.append(stay)
+            if state < FeatureExtractor.MAX_FEATURE_TUPLE:
                 increase = tuple(1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add(increase)
+                actions.append(increase)
             if state > FeatureExtractor.self.MIN_FEATURE_TUPLE:
                 decrease = tuple(-1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add(decrease)
+                actions.append(decrease)
         return actions
 
     # Amanda
-    def create_problem(state, bins):
+    def create_problem(self, state, bins):
         try:
             new_problem = random.choice(bins[state])
+            print(new_problem)
             return Problem(new_problem[0], new_problem[1])
         except:
             raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
-
-        raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
     def next_state(self, state, action):
         try:
@@ -72,8 +71,9 @@ class MDP:
             return
 
         new_state = self.next_state(observed_states, action)
-        problem = self.create_problem(new_state)
-        return zip(new_state, (problem, state[1][1] + 1, state[1][2]))
+        problem = self.create_problem(new_state,self.bins)
+        result = (new_state, (problem, state[1][1] + 1, state[1][2]))
+        return result
 
     # Takara
     def reward(self, state):
