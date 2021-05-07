@@ -6,22 +6,26 @@ import random
 import FeatureExtractor
 import re
 
+
 class Problem:
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
         self.operation = 'operation'
 
+
 class MDP:
     def __init__(self):
         self.temp = None
         self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
-        self.BASE_PROBLEM_KEY = (1, 3, 0, 1, 'trailFalse')
+        self.BASE_PROBLEM_KEY = (-1, -1, -1, -1, 'trailFalse')
+        self.number_of_passed = 1
+        self.game_status = "continue"
 
     # Amanda
     def startState(self):
-        result = random.choice(FeatureExtractor.bins[FeatureExtractor.BASE_PROBLEM_KEY])
-        return Problem(result[0], result[1])
+        result = random.choice(FeatureExtractor.bins[self.BASE_PROBLEM_KEY])
+        return zip(self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.game_status))
 
     # Cortney
     def actions(self, state):
@@ -39,22 +43,20 @@ class MDP:
         return actions
 
     # Amanda
-    def create_problem(self,state):
-        with open("problemBank", "r") as param_file:
-            raw = param_file.read()
-            lines = re.findall(r'\(.*?\)', raw)
-            if lines[0] == str(state):
-                problem_lst = lines[1:]
-                result = random.choice(problem_lst)
-                return Problem(result[1], result[4])
+    def create_problem(state, bins):
+        try:
+            new_problem = random.choice(bins[state])
+            return Problem(new_problem[0], new_problem[1])
+        except:
+            raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
         raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
-    def next_sate(self,state, action):
+    def next_state(self, state, action):
         try:
             return tuple(map(operator.add, state, action))
         except:
-            print("exception next_sate")
+            raise Exception("Operation add failed for next state")
 
     def compare_tuple(self, a, b):
         for answer in [(a == b) for a, b in zip(a, b)]:
@@ -69,7 +71,7 @@ class MDP:
         if len(observed_states) != len(action):
             return
 
-        new_state = self.next_sate(observed_states, action)
+        new_state = self.next_state(observed_states, action)
         problem = self.create_problem(new_state)
         return zip(new_state, (problem, state[1][1] + 1, state[1][2]))
 
@@ -107,8 +109,7 @@ class QLearning:
     def updateQ(self, curr_state, action, reward, nxt_state):
         Q_max = max((self.Q[(nxt_state, a)], a) for a in self.actions(nxt_state))[0]
         self.Q[(curr_state, action)] = self.Q[(curr_state, action)] + self.stepsize() * (
-                    reward + self.gamma * Q_max - self.Q[(curr_state, action)])
-
+                reward + self.gamma * Q_max - self.Q[(curr_state, action)])
 
 # #Simulation
 # class Simulation(MDP, rl, loadPath=None, savePath=None):

@@ -2,6 +2,8 @@ import operator
 import random
 import re
 
+import FeatureExtractor
+
 
 class Problem:
     def __init__(self, x: int, y: int):
@@ -24,19 +26,16 @@ def compare_tuple(a, b):
     return True
 
 
-def create_problem(state):
-    with open("problemBank", "r") as param_file:
-        raw = param_file.read()
-        lines = re.findall(r'\(.*?\)', raw)
-        if lines[0] == str(state):
-            problem_lst = lines[1:]
-            result = random.choice(problem_lst)
-            return Problem(result[1], result[4])
-
-    raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
+def create_problem(state,bins):
+    try:
+        new_problem = random.choice(bins[state])
+        return Problem(new_problem[0], new_problem[1])
+    except:
+        raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
 
 def is_success(state, action):
+    map = {(1, 1, 0, 0, 0):((1,2),(1,3))}
     if type(state) is not tuple or type(action) is not tuple:
         return
     observed_states = state[0]
@@ -44,7 +43,7 @@ def is_success(state, action):
         return
 
     new_state = next_sate(observed_states, action)
-    problem = create_problem(new_state)
+    problem = create_problem(new_state,map)
     return new_state, problem
 
 
