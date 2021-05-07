@@ -1,4 +1,4 @@
-# obseved_states: (total digits, digit difference, ...... )
+# observed_states: (total digits, digit difference, ...... )
 # environment_states: (the actual problem associated with the observed states, number of problems passed, game_status: skip, quit, continue )
 # STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environement_states) )
 import operator
@@ -25,12 +25,17 @@ class MDP:
 
     # Cortney
     def actions(self, state):
+        observed_state, environment_state = state
         actions = {}
-        for i in range(len(state[0])):
-            increase = tuple(1 if i == j else 0 for j in range(len(state[0])))
-            decrease = tuple(-1 if i == j else 0 for j in range(len(state[0])))
-            actions.add((increase, state[1]))
-            actions.add((decrease, state[1]))
+        for i in range(len(observed_state)):
+            stay = tuple([0 for _ in range(len(observed_state))])
+            actions.add((stay, environment_state))
+            if state < FeatureExtractor.self.MAX_FEATURE_TUPLE:
+                increase = tuple(1 if i == j else 0 for j in range(len(observed_state)))
+                actions.add((increase, environment_state))
+            if state > FeatureExtractor.self.MIN_FEATURE_TUPLE:
+                decrease = tuple(-1 if i == j else 0 for j in range(len(observed_state)))
+                actions.add((decrease, environment_state))
         return actions
 
     # Amanda
