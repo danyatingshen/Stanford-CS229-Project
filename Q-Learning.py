@@ -1,6 +1,6 @@
 # observed_states: (total digits, digit difference, ...... )
 # environment_states: (the actual problem associated with the observed states, number of problems passed, game_status: skip, quit, continue )
-# STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environement_states) )
+# STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environment_states) )
 import operator
 import random
 import FeatureExtractor
@@ -32,14 +32,14 @@ class MDP:
         observed_state, environment_state = state
         actions = {}
         for i in range(len(observed_state)):
-            stay = tuple([0 for _ in range(len(observed_state))])
-            actions.add((stay, environment_state))
+            stay = tuple([0] * len(observed_state))
+            actions.add(stay)
             if state < FeatureExtractor.self.MAX_FEATURE_TUPLE:
                 increase = tuple(1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add((increase, environment_state))
+                actions.add(increase)
             if state > FeatureExtractor.self.MIN_FEATURE_TUPLE:
                 decrease = tuple(-1 if i == j else 0 for j in range(len(observed_state)))
-                actions.add((decrease, environment_state))
+                actions.add(decrease)
         return actions
 
     # Amanda
