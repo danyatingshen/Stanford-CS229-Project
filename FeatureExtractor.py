@@ -1,4 +1,4 @@
-
+import json
 from collections import defaultdict
 import math
 
@@ -7,8 +7,7 @@ import math
 from random import random
 
 MAX_NUM = 999
-MAX_FEATURE_TUPLE = (-1,-1,-1,-1,'')
-MIN_FEATURE_TUPLE = (10000,10000,10000,10000,'')
+FEATURE_TUPLE_LIMIT = list()
 BASE_PROBLEM = ()
 bins = defaultdict(lambda: [])
 
@@ -89,30 +88,27 @@ def feature_extractor(val_1, val_2):
         isTrail = 'trailFalse'
 
     if int(val_1) ==0 or int(val_2) == 0:
-        num_1_digit = 'baseCase'
-        num_2_digit = 'baseCase'
-        carry_ops   = 'baseCase'
-        zero_count  = 'baseCase'
+        num_1_digit = -1
+        num_2_digit = -1
+        carry_ops   = -1
+        zero_count  = -1
 
     feature = (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
 
     return feature
 
 def generate_bins_and_constants():
+    for i in range (0,5):
+        FEATURE_TUPLE_LIMIT.append(list())
     for num_1 in range(0, MAX_NUM + 1):
         for num_2 in range(0, MAX_NUM + 1):
             key = feature_extractor(num_1, num_2)
-            update_feature_constants(key)
+            for feature_index in range(len(key)) :
+                if key[feature_index] not in FEATURE_TUPLE_LIMIT[feature_index]:
+                    FEATURE_TUPLE_LIMIT[feature_index].append(key[feature_index])
             bins[key].append((num_1, num_2))
-    return bins,MAX_FEATURE_TUPLE,MIN_FEATURE_TUPLE
+    return bins,FEATURE_TUPLE_LIMIT
 
-
-def update_feature_constants(key):
-    for index in range(len(key)) :
-        if key[index] > MAX_FEATURE_TUPLE[index]:
-            MAX_FEATURE_TUPLE[index] = key[index]
-        if key[index] < MIN_FEATURE_TUPLE[index]:
-            MIN_FEATURE_TUPLE[index] = key[index]
 
 
 
@@ -127,10 +123,15 @@ def show_statis():
         print( bins[key][0:100])
         print("")
 
+def save_json(dictionary):
+    with open("problemBank.json", "w") as outfile:
+        json.dump(dictionary, outfile)
+
 def main():
-    generate_bins_and_constants()
+    bins,FEATURE_TUPLE_LIMIT = generate_bins_and_constants()
 
-
+if __name__ == '__main__':
+    main()
 
 
 

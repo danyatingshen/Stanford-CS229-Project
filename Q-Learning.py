@@ -4,6 +4,7 @@
 import operator
 import random
 import FeatureExtractor
+import json
 
 class Problem:
     def __init__(self, x: int, y: int):
@@ -65,9 +66,7 @@ class MDP:
 
         new_state = self.next_sate(observed_states, action)
         problem = self.create_problem(new_state)
-        return new_state, problem
-
-
+        return zip(new_state, (problem, state[1][1] + 1, state[1][2]))
 
     # Takara
     def reward(self, state):
