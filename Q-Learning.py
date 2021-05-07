@@ -27,7 +27,7 @@ class MDP:
     def actions(self, state):
         observed_state, environment_state = state
         actions = {}
-        for i in range(len(state[0])):
+        for i in range(len(observed_state)):
             stay = tuple([0 for _ in range(len(observed_state))])
             actions.add((stay, environment_state))
             if state < FeatureExtractor.self.MAX_FEATURE_TUPLE:
