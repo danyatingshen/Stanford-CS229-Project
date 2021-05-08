@@ -1,10 +1,12 @@
 
 from collections import defaultdict
 import math
+import ujson
+import json
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
-MAX_NUM = 999
+MAX_NUM = 99
 
 bins = defaultdict(lambda: [])
 
@@ -108,10 +110,20 @@ print("Total number of math problems: " + str( (MAX_NUM+1) ** 2) )
 print("Total number of bins: " + str( len(bins) ) )
 print("")
 
+"""
 for key in bins:
     print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
     print( bins[key][0:100])
     print("")
 
+"""
 
+#with open('dict_temp.txt', 'w') as file:
+#    file.write(ujson.dumps(bins))
 
+temp = json.load( open('dict_temp.txt', 'r') )
+
+for key in temp:
+    print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
+    print( bins[key][0:100])
+    print("")
