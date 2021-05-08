@@ -1,4 +1,4 @@
-# observed_states: (total digits, digit difference, ...... )
+# observed_states: (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
 # environment_states: (the actual problem associated with the observed states, number of problems passed, game_status: skip, quit, continue )
 # STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environment_states) )
 import operator
@@ -30,19 +30,28 @@ class MDP:
         return start_state
 
     # Cortney
+    # observed_state: (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
     def actions(self, state):
         observed_state, environment_state = state
-        actions = list()
-        for i in range(len(observed_state)):
-            stay = tuple([0] * len(observed_state))
-            actions.append(stay)
-            if state < FeatureExtractor.MAX_FEATURE_TUPLE:
-                increase = tuple(1 if i == j else 0 for j in range(len(observed_state)))
-                actions.append(increase)
-            if state > FeatureExtractor.self.MIN_FEATURE_TUPLE:
-                decrease = tuple(-1 if i == j else 0 for j in range(len(observed_state)))
-                actions.append(decrease)
-        return actions
+        valid_actions = list()
+        stay = tuple([0] * len(observed_state))
+        valid_actions.append(stay)
+        # if BASE_PROBLEM_KEY the next problem will (deterministically) be a 1-digit + 1-digit (no carry op) question
+        if observed_state == self.BASE_PROBLEM_KEY:
+            valid_actions.append((1, 1, 0, 0, 'trailFalse'))
+            return valid_actions
+        # if 'trailTrue' the next problem will (deterministically) be a 2-digit + 1-digit (no carry op) question
+        if observed_state[-1] == 'trailTrue':
+            valid_actions.append((2, 1, 0, 0, 'trailFalse'))
+            return valid_actions
+        # otherwise we can try to increment/decrement every feature
+        for i in range(len(observed_state)-1):
+            for j in [-1, 1]:
+                if observed_state[i]+j in self.FEATURE_TUPLE_LIMIT[i]:
+                    action = tuple([j if k == i else 0 for k in range(len(observed_state))])
+                    valid_actions.append(action)
+
+        return valid_actions
 
     # Amanda
     def create_problem(self, state, bins):
