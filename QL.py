@@ -4,6 +4,8 @@
 import operator
 import random
 import FeatureExtractor
+import time
+
 
 
 class Problem:
@@ -19,7 +21,7 @@ class MDP:
         self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
         self.BASE_PROBLEM_KEY = (-1, -1, -1, -1, 'trailFalse')
         self.number_of_passed = 1
-        self.game_status = "continue"
+        self.game_status = "Cont"
 
     # Amanda
     def startState(self):
@@ -77,16 +79,40 @@ class MDP:
 
     # Takara
     def reward(self, state):
-        pass
+        reward = 0
+
+        prompt = "{} + {} = \n".format(state[1][0].x, state[1][0].y)
+        start_time = time.time()
+        val = input(prompt)
+        end_time = time.time() - start_time
+
+        if val == 'q':
+            self.status = 'Quit'
+            return reward
+        if val == 'n':
+            self.status = 'Next'
+            print("Next Question!")
+            return reward
+        if int(val) == (state[1][0].x + state[1][0].y):
+            print("Correct! it took you " + str(int(end_time)) + " seconds!")
+            reward = end_time
+        else:
+            print("Incorrect!")
+
+        return reward
 
     # Takara
     def isEnd(self, state):
-        # next_question
+        if self.status is 'Quit' or self.status is 'Next':
+            return True
+        else:
+            return False
 
-        # end_game
 
-        # return 'Quit'
-        return None
+mdp = MDP()
+strt_state = mdp.startState()
+print(strt_state)
+mdp.reward(strt_state)
 
 
 class QLearning:
