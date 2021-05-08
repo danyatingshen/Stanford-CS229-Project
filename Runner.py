@@ -1,17 +1,21 @@
 from QL import MDP
-
+import random
 
 def main():
     mdp = MDP()
-    start_state = mdp.startState()
-    print("state state: ", start_state)
+    curr_state = mdp.startState()
+    #print("state state: ", curr_state)
     # ------------------------------------
-    # assume action
-    action = (2, 2, 1, 1, '')
+    while True:
+        print("state state: ", curr_state)
+        action = random.choice(mdp.actions(curr_state))
+        reward = mdp.reward(curr_state)
+        next_state = mdp.successor(curr_state, action)
+        curr_state = next_state
+
     # ------------------------------------
-    next = mdp.successor(start_state, action)
-    print(next[1][0].x, next[1][0].y)
-    print(next)
+    #print(next[1][0].x, next[1][0].y)
+   # print(next)
 
     while True:
         next = mdp.successor(next, (0, 1, 0, 0, ''))
