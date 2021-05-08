@@ -14,7 +14,6 @@ class Problem:
         self.y = y
         self.operation = 'operation'
 
-
 class MDP:
     def __init__(self):
         self.temp = None
@@ -98,10 +97,12 @@ class MDP:
         if val == 'q':
             self.status = 'Quit'
             return reward
+
         if val == 'n':
             self.status = 'Next'
             print("Next Question!")
             return reward
+
         if int(val) == (state[1][0].x + state[1][0].y):
             print("Correct! it took you " + str(int(end_time)) + " seconds!")
             reward = end_time
@@ -116,13 +117,6 @@ class MDP:
             return True
         else:
             return False
-
-
-mdp = MDP()
-strt_state = mdp.startState()
-print(strt_state)
-mdp.reward(strt_state)
-
 
 class QLearning:
     def __init__(self, mdp_actions, q_init):
