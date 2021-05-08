@@ -122,8 +122,13 @@ for key in bins:
 #    file.write(ujson.dumps(bins))
 
 temp = json.load( open('dict_temp.txt', 'r') )
+temp2 = ujson.dumps(temp, indent=4)
+print(temp2)
 
+"""
 for key in temp:
     print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
     print( bins[key][0:100])
     print("")
+
+"""
