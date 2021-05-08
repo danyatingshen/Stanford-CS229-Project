@@ -17,6 +17,5 @@ def main():
         next = mdp.successor(next, (0, 1, 0, 0, ''))
         print(next)
 
-
 if __name__ == '__main__':
     main()

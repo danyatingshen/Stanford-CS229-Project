@@ -83,7 +83,6 @@ def feature_extractor(val_1, val_2):
         zero_count = 'trailed'
         num_1_digit = 'trailed'
         num_2_digit = 'trailed'
-
     else:
         isTrail = 'trailFalse'
 
