@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 import math
+import ujson
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
@@ -123,8 +124,11 @@ def show_statis():
         print("")
 
 def save_json(dictionary):
-    with open("problemBank.json", "w") as outfile:
-        json.dump(dictionary, outfile)
+    with open("problemBank.txt", "w") as outfile:
+        ujson.dump(dictionary, outfile)
+
+def load_json():
+    return json.load(open('problemBank.txt', 'r'))
 
 def main():
     bins,FEATURE_TUPLE_LIMIT = generate_bins_and_constants()
