@@ -24,7 +24,7 @@ class MDP:
 
     # Amanda
     def startState(self):
-        result = random.choice(FeatureExtractor.bins[self.BASE_PROBLEM_KEY])
+        result = random.choice(self.bins[self.BASE_PROBLEM_KEY])
         start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.game_status))
         return start_state
 
@@ -55,15 +55,24 @@ class MDP:
     # Amanda
     def create_problem(self, state, bins):
         try:
-            new_problem = random.choice(bins[state])
-            print(new_problem)
-            return Problem(new_problem[0], new_problem[1])
+            if state in self.bins and len(self.bins[state]) > 0:
+                new_problem = random.choice(self.bins[state])
+                print(new_problem)
+                return Problem(new_problem[0], new_problem[1])
+            else:
+                new_problem = random.choice(self.bins[self.BASE_PROBLEM_KEY])
+                return Problem(new_problem[0], new_problem[1])
         except:
             raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
     def next_state(self, state, action):
         try:
-            return tuple(map(operator.add, state, action))
+            s1 = state[0:4]
+            s2 = action[0:4]
+            add_result = list(map(operator.add, s1, s2))
+            add_result.append(action[4])
+            return tuple(add_result)
+
         except:
             raise Exception("Operation add failed for next state")
 
@@ -88,7 +97,7 @@ class MDP:
     # Takara
     def reward(self, state):
         reward = 0
-
+        print(state)
         prompt = "{} + {} = \n".format(state[1][0].x, state[1][0].y)
         start_time = time.time()
         val = input(prompt)
@@ -113,7 +122,7 @@ class MDP:
 
     # Takara
     def isEnd(self, state):
-        if self.status is 'Quit' or self.status is 'Next':
+        if self.status == 'Quit' or self.status == 'Next':
             return True
         else:
             return False
