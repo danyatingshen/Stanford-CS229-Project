@@ -131,5 +131,5 @@ def main():
     print(FEATURE_TUPLE_LIMIT)
     print("")
     show_statis()
-
+    save_json(bins)
     main()
