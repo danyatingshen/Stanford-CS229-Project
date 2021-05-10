@@ -52,7 +52,7 @@ class MDP:
         return valid_actions
 
     # Amanda
-    def create_problem(self, state, bins):
+    def create_problem(self, stxate, bins):
         try:
             if state in self.bins and len(self.bins[state]) > 0:
                 new_problem = random.choice(self.bins[state])
@@ -96,10 +96,10 @@ class MDP:
         return result
 
     # Takara
-    def reward(self, state):
+    def reward(self, state, action, next_state):
         reward = 0
         print(state)
-        prompt = "{} + {} = \n".format(state[1][0].x, state[1][0].y)
+        prompt = "{} + {} = \n".format(next_state[1][0].x, next_state[1][0].y)
         start_time = time.time()
         val = input(prompt)
         end_time = time.time() - start_time
