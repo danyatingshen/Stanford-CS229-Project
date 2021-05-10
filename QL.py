@@ -5,6 +5,7 @@ import operator
 import random
 import FeatureExtractor
 import time
+import collections
 
 
 class Problem:
@@ -19,12 +20,12 @@ class MDP:
         self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
         self.BASE_PROBLEM_KEY = (-1, -1, -1, -1)
         self.number_of_passed = 1
-        self.game_status = "Cont"
+        self.status = "Cont"
 
     # Amanda
     def startState(self):
         result = random.choice(self.bins[self.BASE_PROBLEM_KEY])
-        start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.game_status))
+        start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.status))
         return start_state
 
     # Cortney
@@ -71,7 +72,7 @@ class MDP:
                 return False
         return True
 
-    def successor(self, state, action):
+    def succesor(self, state, action):
         if type(state) is not tuple or type(action) is not tuple:
             return
         observed_states = state[0]
@@ -111,7 +112,7 @@ class MDP:
 
     # Takara
     def isEnd(self, state):
-        if self.status == 'Quit' or self.status == 'Next':
+        if self.status == 'Quit': # greater than 10 questions.
             return True
         else:
             return False
@@ -139,50 +140,32 @@ class QLearning:
         self.Q[(curr_state, action)] = self.Q[(curr_state, action)] + self.stepsize() * (
                 reward + self.gamma * Q_max - self.Q[(curr_state, action)])
 
-# #Simulation
-# class Simulation(MDP, rl, loadPath=None, savePath=None):
-#     def __init__(self, mdp=MDP, rl=QLearning):
-#         q_init = collections.defaultdict(lambda: 0) if loadPath is not None else read(loadPath)
-#         self.mdp = mdp
-#         self.ql = rl(mdp.actions, q_init)
-#         self.episode_rewards = []
-#         self.quit = False
-#
-#     def episode(self):
-#         self.episode_rewards = []
-#         cur_state = mdp.startState()
-#
-#         while self.ql.isEnd() is None:
-#             action = self.ql.getAction(cur_state)
-#             reward = self.mdp.reward(cur_state, action)
-#             nxt_state = self.mdp.succesor(cur_state, action)
-#             self.ql.updateQ(cur_state, action, reward, nxt_state)
-#
-#             cur_state = nxt_state
-#             self.episode_rewards.append(reward)
-#
-#         if self.ql.quit() is 'Quit':
-#             self.quit = True
-#
-#     def save(self):
-#         pass
-#
-#
-# if __name__ == '__main__':
-#
-#     simulate = Simulation(MDP, QLearning)
-#
-#     ep_num = 0
-#     total_rewards = []
-#
-#     while self.quit is False | ep_num <= max_episodes:
-#         simulate.episode()
-#         total_rewards = total_rewards + simulate.episode_rewards
-#         ep_num += 1
-#
-#     #save_stuff
-#     simulate.save()
-#
-#     #stats
-#
-#     #plotstuff
+
+#Simulation
+def simulate(loadPath=None, savePath=None):
+
+        if loadPath is None:
+            q_init = collections.defaultdict(lambda: 0)
+        else:
+            q_init = collections.defaultdict(lambda: 0)
+
+        mdp = MDP()
+        ql = QLearning(mdp.actions, q_init)
+        episode_rewards = []
+
+        cur_state = mdp.startState()
+        while mdp.isEnd(cur_state) is False:
+            action = ql.getAction(cur_state)
+            nxt_state = mdp.succesor(cur_state, action)
+            reward = mdp.reward(cur_state, action, nxt_state)
+            ql.updateQ(cur_state, action, reward, nxt_state)
+
+            cur_state = nxt_state
+            episode_rewards.append(reward)
+
+        return ql.Q
+
+if __name__ == '__main__':
+
+    Q_table = simulate()
+    print(Q_table)
