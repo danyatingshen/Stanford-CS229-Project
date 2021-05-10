@@ -58,9 +58,11 @@ class MDP:
                 new_problem = random.choice(self.bins[state])
                 print(new_problem)
                 return Problem(new_problem[0], new_problem[1])
-            else:
-                new_problem = random.choice(self.bins[self.BASE_PROBLEM_KEY])
-                return Problem(new_problem[0], new_problem[1])
+
+            #TODO: need to be remove after action is right
+            # else:
+            #     new_problem = random.choice(self.bins[self.BASE_PROBLEM_KEY])
+            #     return Problem(new_problem[0], new_problem[1])
         except:
             raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
