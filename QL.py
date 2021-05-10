@@ -36,18 +36,19 @@ class MDP:
         valid_actions.append(stay)
         # if BASE_PROBLEM_KEY the next problem will (deterministically) be a 1-digit + 1-digit (no carry op) question
         if observed_state == self.BASE_PROBLEM_KEY:
-            valid_actions.append((2, 2, 1, 1, 'trailFalse'))
+            valid_actions.append((2, 2, 1, 1, 1))
             return valid_actions
         # if 'trailTrue' the next problem will (deterministically) be a 2-digit + 1-digit (no carry op) question
         if observed_state[-1] == 'trailTrue':
-            valid_actions.append((2, 1, 0, 0, 'trailFalse'))
+            valid_actions.append((2, 1, 0, 0, 1))
             return valid_actions
         # otherwise we can try to increment/decrement every feature
         for i in range(len(observed_state)-1):
             for j in [-1, 1]:
                 if observed_state[i]+j in self.FEATURE_TUPLE_LIMIT[i]:
                     action = tuple([j if k == i else 0 for k in range(len(observed_state))])
-                    valid_actions.append(action)
+                    if len(self.bins[self.next_state(observed_state,action)]) > 0:
+                        valid_actions.append(action)
 
         return valid_actions
 
@@ -56,7 +57,7 @@ class MDP:
         try:
             if state in self.bins and len(self.bins[state]) > 0:
                 new_problem = random.choice(self.bins[state])
-                print(new_problem)
+                print("Create Problem Successfully!", new_problem)
                 return Problem(new_problem[0], new_problem[1])
 
             #TODO: need to be remove after action is right
@@ -71,9 +72,14 @@ class MDP:
             s1 = state[0:4]
             s2 = action[0:4]
             add_result = list(map(operator.add, s1, s2))
-            add_result.append(action[4])
-            return tuple(add_result)
-
+            if action[4] == 1 :
+                add_result.append('trailFalse')
+                return tuple(add_result)
+            elif action[4] == 0 :
+                result = ('trailed', 'trailed', add_result[2], 'trailed', 'trailTrue')
+                return result
+            else :
+                raise Exception("isTrail is invalid")
         except:
             raise Exception("Operation add failed for next state")
 

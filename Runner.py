@@ -7,6 +7,7 @@ def main():
     reward = mdp.reward(curr_state)
     #print("state state: ", curr_state)
     # ------------------------------------
+    random.seed(12345)
     while True:
         print("state: ", curr_state)
         action = random.choice(mdp.actions(curr_state))
