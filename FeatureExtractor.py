@@ -132,4 +132,5 @@ def main():
     print("")
     show_statis()
     save_json(bins)
-    main()
+
+main()
