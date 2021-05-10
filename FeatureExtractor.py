@@ -7,7 +7,7 @@ import ujson
 # Start Small and progressively increase the maxnum
 from random import random
 
-MAX_NUM = 99
+MAX_NUM = 999
 FEATURE_TUPLE_LIMIT = list()
 BASE_PROBLEM_KEY = ()
 bins = defaultdict(lambda: [])
@@ -128,7 +128,8 @@ def load_json():
 
 def main():
     bins, FEATURE_TUPLE_LIMIT = generate_bins_and_constants()
-    print(FEATURE_TUPLE_LIMIT)
+    show_statis()
+    #print(FEATURE_TUPLE_LIMIT)
     # print("")
     # show_statis()
     save_json(bins)

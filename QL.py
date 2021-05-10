@@ -58,7 +58,7 @@ class MDP:
         try:
             if state in self.bins and len(self.bins[state]) > 0:
                 new_problem = random.choice(self.bins[state])
-                print("Create Problem Successfully!", new_problem)
+                #print("Create Problem Successfully!", new_problem)
                 return Problem(new_problem[0], new_problem[1])
         except:
             raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
