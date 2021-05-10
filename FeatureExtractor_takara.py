@@ -128,7 +128,6 @@ for key in temp:
     print("Bin Name: " + str(key) + "  Bin Count: " + str(len(temp[key])))
     print( temp[key][0:100])
     print("")
-"""
 
 
 
