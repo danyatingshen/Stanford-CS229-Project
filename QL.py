@@ -7,7 +7,6 @@ import FeatureExtractor
 import time
 
 
-
 class Problem:
     def __init__(self, x: int, y: int):
         self.x = x
@@ -37,7 +36,7 @@ class MDP:
         valid_actions.append(stay)
         # if BASE_PROBLEM_KEY the next problem will (deterministically) be a 1-digit + 1-digit (no carry op) question
         if observed_state == self.BASE_PROBLEM_KEY:
-            valid_actions.append((1, 1, 0, 0, 'trailFalse'))
+            valid_actions.append((2, 2, 1, 1, 'trailFalse'))
             return valid_actions
         # if 'trailTrue' the next problem will (deterministically) be a 2-digit + 1-digit (no carry op) question
         if observed_state[-1] == 'trailTrue':

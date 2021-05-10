@@ -6,7 +6,7 @@ import json
 
 # For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
 #Start Small and progressively increase the maxnum
-MAX_NUM = 99
+MAX_NUM = 999
 
 bins = defaultdict(lambda: [])
 
@@ -82,7 +82,6 @@ def feature_extractor(val_1, val_2):
         zero_count = 'trailed'
         num_1_digit = 'trailed'
         num_2_digit = 'trailed'
-
     else:
         isTrail = 'trailFalse'
 
@@ -93,7 +92,6 @@ def feature_extractor(val_1, val_2):
         zero_count  = 'baseCase'
 
     feature = (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
-
     return feature
 
 
@@ -105,19 +103,20 @@ for num_1 in range(0, MAX_NUM + 1):
 
         bins[key].append((num_1, num_2))
 
+
 # Bin statistics
 print("Total number of math problems: " + str( (MAX_NUM+1) ** 2) )
 print("Total number of bins: " + str( len(bins) ) )
 print("")
 
-"""
+
 for key in bins:
     print("Bin Name: " + str(key) + "   Bin Count: " + str(len(bins[key])))
     print( bins[key][0:100])
     print("")
 
-"""
 
+"""
 with open('dict_temp2.json', 'w') as file:
     file.write(ujson.dumps(bins))
 
@@ -130,4 +129,10 @@ for key in temp:
     print("Bin Name: " + str(key) + "  Bin Count: " + str(len(temp[key])))
     print( temp[key][0:100])
     print("")
+"""
+
+
+
+
+
 
