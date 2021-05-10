@@ -22,16 +22,20 @@ class MDP:
         self.number_of_passed = 1
         self.status = "Cont"
 
+        self.problem = None
     # Amanda
     def startState(self):
         result = random.choice(self.bins[self.BASE_PROBLEM_KEY])
-        start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.status))
+        #start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.status))
+        start_state = (self.BASE_PROBLEM_KEY)
+        self.problem = Problem(result[0], result[1])
+
         return start_state
 
     # Cortney
     # observed_state: (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
     def actions(self, state):
-        observed_state, environment_state = state
+        observed_state = state#, environment_state = state
         valid_actions = list()
         stay = tuple([0] * len(observed_state))
         valid_actions.append(stay)
@@ -75,22 +79,27 @@ class MDP:
     def succesor(self, state, action):
         if type(state) is not tuple or type(action) is not tuple:
             return
-        observed_states = state[0]
+        observed_states = state
         if len(observed_states) != len(action):
             return
 
         new_state = self.next_state(observed_states, action)
-        problem = self.create_problem(new_state)
-        result = (new_state, (problem, state[1][1] + 1, state[1][2]))
+        self.problem = self.create_problem(new_state)
+        #result = (new_state, (problem, state[1][1] + 1, state[1][2]))
+        result = new_state
+        #self.problem = problem
         return result
 
     # Takara
     def reward(self, state,action,next_state):
-        reward = 0
+        reward = 10
         print(state)
-        prompt = "{} + {} = \n".format(next_state[1][0].x, next_state[1][0].y)
+        prompt = "{} + {} = \n".format(self.problem.x, self.problem.y)
         start_time = time.time()
-        val = input(prompt)
+        val = ""
+        while val ==  "":
+            val = input(prompt)
+
         end_time = time.time() - start_time
 
         if val == 'q':
@@ -102,7 +111,7 @@ class MDP:
             print("Next Question!")
             return reward
 
-        if int(val) == (next_state[1][0].x + next_state[1][0].y):
+        if int(val) == (self.problem.x + self.problem.y):
             print("Correct! it took you " + str(int(end_time)) + " seconds!")
             reward = end_time
         else:
@@ -122,7 +131,7 @@ class QLearning:
     def __init__(self, mdp_actions, q_init):
         self.actions = mdp_actions
         self.gamma = 0.95  # discount rate
-        self.epsilon = 0.3  # exploration rate
+        self.epsilon = 0.4  # exploration rate
         self.numIters = 0
         self.Q = q_init
 
