@@ -17,7 +17,7 @@ class MDP:
     def __init__(self):
         self.temp = None
         self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
-        self.BASE_PROBLEM_KEY = (-1, -1, -1, -1, 'trailFalse')
+        self.BASE_PROBLEM_KEY = (-1, -1, -1, -1)
         self.number_of_passed = 1
         self.game_status = "Cont"
 
@@ -36,44 +36,32 @@ class MDP:
         valid_actions.append(stay)
         # if BASE_PROBLEM_KEY the next problem will (deterministically) be a 1-digit + 1-digit (no carry op) question
         if observed_state == self.BASE_PROBLEM_KEY:
-            valid_actions.append((2, 2, 1, 1, 'trailFalse'))
-            return valid_actions
-        # if 'trailTrue' the next problem will (deterministically) be a 2-digit + 1-digit (no carry op) question
-        if observed_state[-1] == 'trailTrue':
-            valid_actions.append((2, 1, 0, 0, 'trailFalse'))
+            valid_actions.append((2, 2, 1, 1))
             return valid_actions
         # otherwise we can try to increment/decrement every feature
-        for i in range(len(observed_state)-1):
+        for i in range(len(observed_state)):
             for j in [-1, 1]:
-                if observed_state[i]+j in self.FEATURE_TUPLE_LIMIT[i]:
+                if observed_state[i] + j in self.FEATURE_TUPLE_LIMIT[i]:
                     action = tuple([j if k == i else 0 for k in range(len(observed_state))])
-                    valid_actions.append(action)
+                    if len(self.bins[self.next_state(observed_state,action)]) > 0:
+                        valid_actions.append(action)
 
         return valid_actions
 
     # Amanda
-    def create_problem(self, stxate, bins):
+    def create_problem(self, state):
         try:
             if state in self.bins and len(self.bins[state]) > 0:
                 new_problem = random.choice(self.bins[state])
-                print(new_problem)
+                print("Create Problem Successfully!", new_problem)
                 return Problem(new_problem[0], new_problem[1])
-
-            #TODO: need to be remove after action is right
-            # else:
-            #     new_problem = random.choice(self.bins[self.BASE_PROBLEM_KEY])
-            #     return Problem(new_problem[0], new_problem[1])
         except:
             raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
     def next_state(self, state, action):
         try:
-            s1 = state[0:4]
-            s2 = action[0:4]
-            add_result = list(map(operator.add, s1, s2))
-            add_result.append(action[4])
-            return tuple(add_result)
-
+            add_result = tuple(map(operator.add, state, action))
+            return add_result
         except:
             raise Exception("Operation add failed for next state")
 
@@ -91,12 +79,12 @@ class MDP:
             return
 
         new_state = self.next_state(observed_states, action)
-        problem = self.create_problem(new_state,self.bins)
+        problem = self.create_problem(new_state)
         result = (new_state, (problem, state[1][1] + 1, state[1][2]))
         return result
 
     # Takara
-    def reward(self, state, action, next_state):
+    def reward(self, state,action,next_state):
         reward = 0
         print(state)
         prompt = "{} + {} = \n".format(next_state[1][0].x, next_state[1][0].y)
@@ -113,7 +101,7 @@ class MDP:
             print("Next Question!")
             return reward
 
-        if int(val) == (state[1][0].x + state[1][0].y):
+        if int(val) == (next_state[1][0].x + next_state[1][0].y):
             print("Correct! it took you " + str(int(end_time)) + " seconds!")
             reward = end_time
         else:
@@ -127,6 +115,7 @@ class MDP:
             return True
         else:
             return False
+
 
 class QLearning:
     def __init__(self, mdp_actions, q_init):

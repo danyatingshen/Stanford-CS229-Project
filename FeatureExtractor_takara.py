@@ -116,7 +116,6 @@ for key in bins:
     print("")
 
 
-"""
 with open('dict_temp2.json', 'w') as file:
     file.write(ujson.dumps(bins))
 
@@ -129,7 +128,6 @@ for key in temp:
     print("Bin Name: " + str(key) + "  Bin Count: " + str(len(temp[key])))
     print( temp[key][0:100])
     print("")
-"""
 
 
 

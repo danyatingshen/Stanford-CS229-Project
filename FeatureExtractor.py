@@ -7,7 +7,7 @@ import ujson
 # Start Small and progressively increase the maxnum
 from random import random
 
-MAX_NUM = 999
+MAX_NUM = 99
 FEATURE_TUPLE_LIMIT = list()
 BASE_PROBLEM_KEY = ()
 bins = defaultdict(lambda: [])
@@ -80,14 +80,6 @@ def feature_extractor(val_1, val_2):
     num_2_digit = len(str(val_2))
 
     # Count not leading zeros
-    trail = non_trailing_zero_count(val_1, val_2)
-    if trail:
-        isTrail = 'trailTrue'
-        zero_count = 'trailed'
-        num_1_digit = 'trailed'
-        num_2_digit = 'trailed'
-    else:
-        isTrail = 'trailFalse'
 
     if int(val_1) == 0 or int(val_2) == 0:
         num_1_digit = -1
@@ -95,13 +87,13 @@ def feature_extractor(val_1, val_2):
         carry_ops = -1
         zero_count = -1
 
-    feature = (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
+    feature = (num_1_digit, num_2_digit, carry_ops, zero_count)
 
     return feature
 
 
 def generate_bins_and_constants():
-    for i in range(0, 5):
+    for i in range(4):
         FEATURE_TUPLE_LIMIT.append(list())
     for num_1 in range(0, MAX_NUM + 1):
         for num_2 in range(0, MAX_NUM + 1):
@@ -137,7 +129,8 @@ def load_json():
 def main():
     bins, FEATURE_TUPLE_LIMIT = generate_bins_and_constants()
     print(FEATURE_TUPLE_LIMIT)
+    # print("")
+    # show_statis()
+    save_json(bins)
 
-
-if __name__ == '__main__':
-    main()
+main()
