@@ -15,6 +15,7 @@ def main():
         print(next_state)
         #reward = mdp.reward(curr_state,action,next_state)
         curr_state = next_state
+        print("")
 
 if __name__ == '__main__':
     main()
