@@ -116,7 +116,6 @@ for key in bins:
     print("")
 
 
-"""
 with open('dict_temp2.json', 'w') as file:
     file.write(ujson.dumps(bins))
 
