@@ -6,7 +6,8 @@ import random
 import FeatureExtractor
 import time
 import collections
-
+import pprint
+from SimulatedStudent import student1
 
 class Problem:
     def __init__(self, x: int, y: int):
@@ -21,7 +22,7 @@ class MDP:
         self.BASE_PROBLEM_KEY = (-1, -1, -1, -1)
         self.number_of_passed = 1
         self.status = "Cont"
-
+        self.simulatedStudent = True
         self.problem = None
     # Amanda
     def startState(self):
@@ -85,19 +86,30 @@ class MDP:
 
         new_state = self.next_state(observed_states, action)
         self.problem = self.create_problem(new_state)
+        self.number_of_passed += 1
         #result = (new_state, (problem, state[1][1] + 1, state[1][2]))
         result = new_state
         #self.problem = problem
         return result
 
     # Takara
-    def reward(self, state,action,next_state):
-        reward = 10
-        print(state)
+    def reward(self, state, action, next_state):
+        reward = 0
+        print(next_state)
+
+        if self.number_of_passed % 100 == 0:
+            self.isStudent(state)
+
+        if self.simulatedStudent:
+            reward = student1(self.problem.x, self.problem.y)
+            print(reward)
+            return reward
+
         prompt = "{} + {} = \n".format(self.problem.x, self.problem.y)
         start_time = time.time()
+
         val = ""
-        while val ==  "":
+        while val == "":
             val = input(prompt)
 
         end_time = time.time() - start_time
@@ -109,16 +121,25 @@ class MDP:
         if val == 'n':
             self.status = 'Next'
             print("Next Question!")
-            return reward
+            return -end_time
 
         if int(val) == (self.problem.x + self.problem.y):
             print("Correct! it took you " + str(int(end_time)) + " seconds!")
             reward = end_time
         else:
             print("Incorrect!")
-
+            reward = -end_time
         return reward
 
+
+    def isStudent(self,state):
+        prompt = "continue simulation?"
+        val = input(prompt)
+        if val == 'y':
+            return
+        else:
+            self.simulatedStudent = False
+            return
     # Takara
     def isEnd(self, state):
         if self.status == 'Quit': # greater than 10 questions.
@@ -154,9 +175,9 @@ class QLearning:
 def simulate(loadPath=None, savePath=None):
 
         if loadPath is None:
-            q_init = collections.defaultdict(lambda: 0)
+            q_init = collections.defaultdict(lambda: 10)
         else:
-            q_init = collections.defaultdict(lambda: 0)
+            q_init = collections.defaultdict(lambda: 10)
 
         mdp = MDP()
         ql = QLearning(mdp.actions, q_init)
@@ -177,4 +198,4 @@ def simulate(loadPath=None, savePath=None):
 if __name__ == '__main__':
 
     Q_table = simulate()
-    print(Q_table)
+    pprint.pprint(Q_table, width=1)
