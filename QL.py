@@ -24,6 +24,7 @@ class MDP:
         self.status = "Cont"
         self.simulatedStudent = True
         self.problem = None
+        self.curr_time = 0
 
     # Amanda
     def startState(self):
@@ -92,7 +93,7 @@ class MDP:
 
     # Takara
     def reward(self, state, action, next_state):
-        reward = 0
+        #reward = 0
         print(next_state)
 
         if self.number_of_passed % 100 == 0:
@@ -112,23 +113,24 @@ class MDP:
 
         end_time = time.time() - start_time
 
+        reward = self.curr_time - end_time
+        self.curr_time = end_time
+
         if val == 'q':
             self.status = 'Quit'
-            return reward
+            return 0
 
         if val == 'n':
             self.status = 'Next'
             print("Next Question!")
-            return -end_time
+            return -abs(reward)
 
         if int(val) == (self.problem.x + self.problem.y):
             print("Correct! it took you " + str(int(end_time)) + " seconds!")
-            reward = end_time
+            reward = reward
         else:
             print("Incorrect!")
-            reward = -end_time
-        return reward
-
+            reward = -abs(reward)
 
     def isStudent(self,state):
         prompt = "continue simulation?"
