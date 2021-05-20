@@ -24,6 +24,7 @@ class MDP:
         self.status = "Cont"
         self.simulatedStudent = True
         self.problem = None
+
     # Amanda
     def startState(self):
         result = random.choice(self.bins[self.BASE_PROBLEM_KEY])
@@ -87,10 +88,7 @@ class MDP:
         new_state = self.next_state(observed_states, action)
         self.problem = self.create_problem(new_state)
         self.number_of_passed += 1
-        #result = (new_state, (problem, state[1][1] + 1, state[1][2]))
-        result = new_state
-        #self.problem = problem
-        return result
+        return new_state
 
     # Takara
     def reward(self, state, action, next_state):
@@ -142,7 +140,7 @@ class MDP:
             return
     # Takara
     def isEnd(self, state):
-        if self.status == 'Quit': # greater than 10 questions.
+        if self.status == 'Quit':# greater than 10 questions.
             return True
         else:
             return False
