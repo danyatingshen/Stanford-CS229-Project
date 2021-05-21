@@ -152,7 +152,7 @@ class QLearning:
     def __init__(self, mdp_actions, q_init):
         self.actions = mdp_actions
         self.gamma = 0.95  # discount rate
-        self.epsilon = 0.4  # exploration rate
+        self.epsilon = 0.3  # exploration rate
         self.numIters = 0
         self.Q = q_init
 
