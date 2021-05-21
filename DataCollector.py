@@ -6,7 +6,7 @@ from collections import defaultdict
 
 
 def main():
-    bins = json.load(open('problemBank.txt', 'r'))
+    bins = ujson.load(open('problemBank.txt', 'r'))
     val = ""
     while val == "":
         val = input("Type your name so I can save your result and differentiate from other:")
@@ -28,13 +28,11 @@ def main():
             val = ""
             while val == "":
                 val = input(prompt)
-            if val.isdigit():
-                print("VALID INTERGER")
             state_time = time.time() - start_time
             print("Time:", state_time)
 
             if val == 'q':
-                return
+                return result
 
             if int(val) == (next[0] + next[1]):
                 print("Correct! it took you " + str(int(state_time)) + " seconds!")
@@ -45,11 +43,11 @@ def main():
         result[problem] = value
         print("Next Level, result", result)
 
-    save_json(result,name)
+    save_json(result, name)
 
 def save_json(dictionary,name):
     with open("data_"+name+".txt", "w") as outfile:
         ujson.dump(dictionary, outfile)
 
 if __name__ == '__main__':
-    main()
+    print(main())

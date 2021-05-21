@@ -1,6 +1,7 @@
 import time
 import collections
 import ujson
+import random
 
 def usr_input(problem):
     prompt = "{} + {} = \n".format(problem[0], problem[1])
@@ -14,6 +15,17 @@ def usr_input(problem):
 
     return val, response_time
 
+def students(student, state, problem):
+    gauss = student[str(state)]
+    response_time = random.gauss(gauss[0], gauss[1])
+
+    if response_time < 0:
+        #Make val an incorrect answer
+        val = problem[0] + problem[1] + 1
+    else:
+        val = problem[0] + problem[1]
+
+    return val, abs(response_time)
 
 # student is a dict with the distributions.....
 def load_student(load_student_filename):
@@ -36,3 +48,4 @@ def save_q(save_q_filename, q_dict):
     if save_q_filename is not None:
         with open(save_q_filename, "w") as outfile:
             ujson.dump(q_dict, outfile)
+
