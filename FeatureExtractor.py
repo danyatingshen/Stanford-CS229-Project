@@ -8,7 +8,7 @@ import pprint
 # Start Small and progressively increase the maxnum
 from random import random
 
-MAX_NUM = 999
+MAX_NUM = 99
 FEATURE_TUPLE_LIMIT = list()
 BASE_PROBLEM_KEY = ()
 bins = defaultdict(lambda: [])
@@ -119,12 +119,12 @@ def show_statis():
 
 
 def save_json(dictionary):
-    with open("problemBank.txt", "w") as outfile:
+    with open("problemBank.json", "w") as outfile:
         ujson.dump(dictionary, outfile)
 
 
 def load_json():
-    return json.load(open('problemBank.txt', 'r'))
+    return json.load(open('problemBank.json', 'r'))
 
 
 def main():

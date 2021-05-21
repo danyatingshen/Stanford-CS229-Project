@@ -5,37 +5,28 @@ import operator
 import random
 import time
 import collections
-import json
+import ujson
 import pprint
-from SimulatedStudent import student1
-
-class Problem:
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
-        self.operation = 'operation'
+import util
+import math
 
 class MDP:
     def __init__(self):
-        self.bins = json.load(open('problemBank.txt', 'r'))
+        self.bins = ujson.load(open('problemBank.json', 'r'))
         self.FEATURE_TUPLE_LIMIT = self.bins['state_limit']
         self.num_states = self.bins['num_states']
         self.BASE_PROBLEM_KEY = tuple([-1] * self.num_states)
         self.number_of_passed = 1
         self.problem = None
-        self.curr_state_time = 0
+        self.curr_state_response_time = 0
 
-        #Temporary
         self.status = None
-        self.useSimulatedStudent = True
-    # Amanda
-    def startState(self):
-        result = random.choice(self.bins[str(self.BASE_PROBLEM_KEY)])
-        self.problem = Problem(result[0], result[1])
+        self.sim_student = None
+
+    def start_state(self):
+        self.problem = (random.choice(self.bins[str(self.BASE_PROBLEM_KEY)]))
         return self.BASE_PROBLEM_KEY
 
-    # Cortney
-    # observed_state: (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
     def actions(self, state):
         valid_actions = list()
         stay = tuple([0] * self.num_states)
@@ -50,66 +41,26 @@ class MDP:
             for j in [-1, 1]:
                 if state[i] + j in self.FEATURE_TUPLE_LIMIT[i]:
                     action = tuple([j if k == i else 0 for k in range(self.num_states)])
-                    if str(self.next_state(state, action)) in self.bins.keys():
+                    if str(tuple(map(operator.add, state, action))) in self.bins.keys():
                         valid_actions.append(action)
-
         return valid_actions
 
-    # Amanda
-    def create_problem(self, state):
-        #try:
-            #if state in self.bins and len(self.bins[state]) > 0:
-        new_problem = random.choice(self.bins[str(state)])
-        #print("Create Problem Successfully!", new_problem)
-        return Problem(new_problem[0], new_problem[1])
-        #except:
-        #    raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
-
-    def next_state(self, state, action):
-        try:
-            add_result = tuple(map(operator.add, state, action))
-            return add_result
-        except:
-            raise Exception("Operation add failed for next state")
-
-    def succesor(self, state, action):
-        if type(state) is not tuple or type(action) is not tuple:
-            return
-        observed_states = state
-        if len(observed_states) != len(action):
-            return
-
-        new_state = self.next_state(observed_states, action)
-        self.problem = self.create_problem(new_state)
+    def successor(self, state, action):
+        nxt_state = tuple(map(operator.add, state, action))
+        self.problem = random.choice(self.bins[str(nxt_state)])
         self.number_of_passed += 1
-        return new_state
+        return nxt_state
 
-    # Takara
     def reward(self, state, action, next_state):
-        print(next_state)
 
-        if self.number_of_passed % 100 == 0:
-            self.isStudent(state)
+        #if self.sim_student is not None:
+        #    reward = util.students(self.sim_student, self.problem[0], self.problem[1])
+        #    return reward
 
-        if self.useSimulatedStudent:
-            reward = student1(self.problem.x, self.problem.y)
-            print(reward)
-            return reward
+        val, nxt_state_response_time = util.usr_input(self.problem)
+        reward = nxt_state_response_time - self.curr_state_response_time
 
-        prompt = "{} + {} = \n".format(self.problem.x, self.problem.y)
-        start_time = time.time()
-
-        val = ""
-        while val == "":
-            val = input(prompt)
-
-        if val.isdigit():
-            print("VALID INTERGER")
-
-        next_state_time = time.time() - start_time
-
-        reward = self.curr_state_time - next_state_time
-        self.curr_state_time = next_state_time
+        self.curr_state_response_time = nxt_state_response_time
 
         if val == 'q':
             self.status = 'Quit'
@@ -118,85 +69,84 @@ class MDP:
         if val == 'n':
             self.status = 'Next'
             print("Next Question!")
-            return -abs(reward)
+            reward - abs(reward)
 
-        if int(val) == (self.problem.x + self.problem.y):
-            print("Correct! it took you " + str(int(reward)) + " seconds!")
+        if int(val) == (self.problem[0] + self.problem[1]):
+            print("Correct! it took you " + str(int(reward)) + " seconds longer than the last problem!")
             reward = reward
         else:
-            print("Incorrect!")
+            print("Incorrect!it took you " + str(int(reward)) + " seconds longer than the last problem!")
             reward = -abs(reward)
 
         return reward
 
-    def isStudent(self, state):
-        prompt = "continue simulation?"
-        val = input(prompt)
-        if val == 'y':
-            return
-        else:
-            self.useSimulatedStudent = False
-            return
-
-    # Takara
     def isEnd(self, state):
         if self.status == 'Quit':
             return True
         else:
             return False
 
+
 class QLearning:
-    def __init__(self, mdp_actions, q_init):
+    def __init__(self, mdp_actions, q_init, train_mode):
         self.actions = mdp_actions
         self.gamma = 0.95  # discount rate
         self.epsilon = 0.3  # exploration rate
-        self.numIters = 0
+        self.num_iterations = 0
         self.Q = q_init
+        self.train_mode = train_mode
 
     def getAction(self, state):
+        self.num_iterations += 1
         if random.random() < self.epsilon:
             return random.choice(self.actions(state))
         else:
-            return max((self.Q[(state, a)], a) for a in self.actions(state))[1]
+            return max((self.Q[str((state, a))], a) for a in self.actions(state))[1]
 
     def stepsize(self):
-        return .5
+        if self.train_mode:
+            return 1/math.sqrt(self.num_iterations)
+        else:
+            return .5
 
     def updateQ(self, curr_state, action, reward, nxt_state):
-        Q_max = max((self.Q[(nxt_state, a)], a) for a in self.actions(nxt_state))[0]
-        self.Q[(curr_state, action)] = self.Q[(curr_state, action)] + self.stepsize() * (
-                reward + self.gamma * Q_max - self.Q[(curr_state, action)])
+        Q_max = max((self.Q[str((nxt_state, a))], a) for a in self.actions(nxt_state))[0]
+        self.Q[str((curr_state, action))] = self.Q[str((curr_state, action))] + self.stepsize() * (
+                reward + self.gamma * Q_max - self.Q[str((curr_state, action))])
 
-#Simulation
-def simulate(loadPath=None, savePath=None):
 
-        if loadPath is None:
-            q_init = collections.defaultdict(lambda: 0)
-        else:
-            q_init = collections.defaultdict(lambda: 0)
+# Simulation
+def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=None, train_mode=True, max_iter=10000):
+    q_init = util.load_q(load_q_filename)
+    sim_student = util.load_student(sim_student_filename)
 
-        mdp = MDP()
-        ql = QLearning(mdp.actions, q_init)
-        episode_rewards = []
+    mdp = MDP()
+    mdp.sim_student = sim_student
 
-        cur_state = mdp.startState()
-        while mdp.isEnd(cur_state) is False:
+    ql = QLearning(mdp.actions, q_init, train_mode)
 
-            action = ql.getAction(cur_state)
+    episode_rewards = []
+    cur_state = mdp.start_state()
+    for _ in range(max_iter):
 
-            nxt_state = mdp.succesor(cur_state, action)
-            reward = mdp.reward(cur_state, action, nxt_state)
-            ql.updateQ(cur_state, action, reward, nxt_state)
+        action = ql.getAction(cur_state)
+        nxt_state = mdp.successor(cur_state, action)
+        reward = mdp.reward(cur_state, action, nxt_state)
+        ql.updateQ(cur_state, action, reward, nxt_state)
 
-            cur_state = nxt_state
-            episode_rewards.append(reward)
+        cur_state = nxt_state
+        episode_rewards.append(reward)
 
-        return ql.Q
+        if mdp.isEnd(cur_state):
+            break
+
+    util.save_q(save_q_filename, ql.Q)
+
+    return ql.Q
+
 
 if __name__ == '__main__':
+    #Q_table = simulate(save_q_filename='q_test.json')
+    Q_table = simulate(load_q_filename='q_test.json')
 
-    Q_table = simulate()
     pprint.pprint(Q_table, width=1)
-
-
-
