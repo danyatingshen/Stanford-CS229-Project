@@ -43,7 +43,7 @@ def is_success(state, action):
         return
 
     new_state = next_sate(observed_states, action)
-    problem = create_problem(new_state,map)
+    problem = create_problem(new_state, map)
     return new_state, problem
 
 

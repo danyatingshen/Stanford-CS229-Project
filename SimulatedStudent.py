@@ -1,7 +1,7 @@
-import FeatureExtractor
+from FeatureExtractor import feature_extractor
 
 def student1(x, y):
-    features = FeatureExtractor.feature_extractor(x, y)
+    features = feature_extractor(x, y)
     num1_digits = features[0]
     num2_digits = features[1]
     num_carrys = features[2]

@@ -3,9 +3,9 @@
 # STATE STRUCTURE a tuple consisting of 2 tuples : ( (observed_states), (environment_states) )
 import operator
 import random
-import FeatureExtractor
 import time
 import collections
+import json
 import pprint
 from SimulatedStudent import student1
 
@@ -17,54 +17,53 @@ class Problem:
 
 class MDP:
     def __init__(self):
-        self.temp = None
-        self.bins, self.FEATURE_TUPLE_LIMIT = FeatureExtractor.generate_bins_and_constants()
-        self.BASE_PROBLEM_KEY = (-1, -1, -1, -1)
+        self.bins = json.load(open('problemBank.txt', 'r'))
+        self.FEATURE_TUPLE_LIMIT = self.bins['state_limit']
+        self.num_states = self.bins['num_states']
+        self.BASE_PROBLEM_KEY = tuple([-1] * self.num_states)
         self.number_of_passed = 1
-        self.status = "Cont"
-        self.simulatedStudent = True
         self.problem = None
-        self.curr_time = 0
+        self.curr_state_time = 0
 
+        #Temporary
+        self.status = None
+        self.useSimulatedStudent = True
     # Amanda
     def startState(self):
-        result = random.choice(self.bins[self.BASE_PROBLEM_KEY])
-        #start_state = (self.BASE_PROBLEM_KEY, (Problem(result[0], result[1]), self.number_of_passed, self.status))
-        start_state = (self.BASE_PROBLEM_KEY)
+        result = random.choice(self.bins[str(self.BASE_PROBLEM_KEY)])
         self.problem = Problem(result[0], result[1])
-
-        return start_state
+        return self.BASE_PROBLEM_KEY
 
     # Cortney
     # observed_state: (num_1_digit, num_2_digit, carry_ops, zero_count, isTrail)
     def actions(self, state):
-        observed_state = state#, environment_state = state
         valid_actions = list()
-        stay = tuple([0] * len(observed_state))
+        stay = tuple([0] * self.num_states)
+
         valid_actions.append(stay)
         # if BASE_PROBLEM_KEY the next problem will (deterministically) be a 1-digit + 1-digit (no carry op) question
-        if observed_state == self.BASE_PROBLEM_KEY:
+        if state == self.BASE_PROBLEM_KEY:
             valid_actions.append((2, 2, 1, 1))
             return valid_actions
         # otherwise we can try to increment/decrement every feature
-        for i in range(len(observed_state)):
+        for i in range(self.num_states):
             for j in [-1, 1]:
-                if observed_state[i] + j in self.FEATURE_TUPLE_LIMIT[i]:
-                    action = tuple([j if k == i else 0 for k in range(len(observed_state))])
-                    if len(self.bins[self.next_state(observed_state,action)]) > 0:
+                if state[i] + j in self.FEATURE_TUPLE_LIMIT[i]:
+                    action = tuple([j if k == i else 0 for k in range(self.num_states)])
+                    if str(self.next_state(state, action)) in self.bins.keys():
                         valid_actions.append(action)
 
         return valid_actions
 
     # Amanda
     def create_problem(self, state):
-        try:
-            if state in self.bins and len(self.bins[state]) > 0:
-                new_problem = random.choice(self.bins[state])
-                #print("Create Problem Successfully!", new_problem)
-                return Problem(new_problem[0], new_problem[1])
-        except:
-            raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
+        #try:
+            #if state in self.bins and len(self.bins[state]) > 0:
+        new_problem = random.choice(self.bins[str(state)])
+        #print("Create Problem Successfully!", new_problem)
+        return Problem(new_problem[0], new_problem[1])
+        #except:
+        #    raise Exception('Cannot find matching tuple in problem bank for next state : ', state)
 
     def next_state(self, state, action):
         try:
@@ -72,12 +71,6 @@ class MDP:
             return add_result
         except:
             raise Exception("Operation add failed for next state")
-
-    def compare_tuple(self, a, b):
-        for answer in [(a == b) for a, b in zip(a, b)]:
-            if not answer:
-                return False
-        return True
 
     def succesor(self, state, action):
         if type(state) is not tuple or type(action) is not tuple:
@@ -93,13 +86,12 @@ class MDP:
 
     # Takara
     def reward(self, state, action, next_state):
-        #reward = 0
         print(next_state)
 
         if self.number_of_passed % 100 == 0:
             self.isStudent(state)
 
-        if self.simulatedStudent:
+        if self.useSimulatedStudent:
             reward = student1(self.problem.x, self.problem.y)
             print(reward)
             return reward
@@ -111,10 +103,13 @@ class MDP:
         while val == "":
             val = input(prompt)
 
-        end_time = time.time() - start_time
+        if val.isdigit():
+            print("VALID INTERGER")
 
-        reward = self.curr_time - end_time
-        self.curr_time = end_time
+        next_state_time = time.time() - start_time
+
+        reward = self.curr_state_time - next_state_time
+        self.curr_state_time = next_state_time
 
         if val == 'q':
             self.status = 'Quit'
@@ -126,27 +121,29 @@ class MDP:
             return -abs(reward)
 
         if int(val) == (self.problem.x + self.problem.y):
-            print("Correct! it took you " + str(int(end_time)) + " seconds!")
+            print("Correct! it took you " + str(int(reward)) + " seconds!")
             reward = reward
         else:
             print("Incorrect!")
             reward = -abs(reward)
 
-    def isStudent(self,state):
+        return reward
+
+    def isStudent(self, state):
         prompt = "continue simulation?"
         val = input(prompt)
         if val == 'y':
             return
         else:
-            self.simulatedStudent = False
+            self.useSimulatedStudent = False
             return
+
     # Takara
     def isEnd(self, state):
-        if self.status == 'Quit':# greater than 10 questions.
+        if self.status == 'Quit':
             return True
         else:
             return False
-
 
 class QLearning:
     def __init__(self, mdp_actions, q_init):
@@ -170,14 +167,13 @@ class QLearning:
         self.Q[(curr_state, action)] = self.Q[(curr_state, action)] + self.stepsize() * (
                 reward + self.gamma * Q_max - self.Q[(curr_state, action)])
 
-
 #Simulation
 def simulate(loadPath=None, savePath=None):
 
         if loadPath is None:
-            q_init = collections.defaultdict(lambda: 10)
+            q_init = collections.defaultdict(lambda: 0)
         else:
-            q_init = collections.defaultdict(lambda: 10)
+            q_init = collections.defaultdict(lambda: 0)
 
         mdp = MDP()
         ql = QLearning(mdp.actions, q_init)
@@ -185,7 +181,9 @@ def simulate(loadPath=None, savePath=None):
 
         cur_state = mdp.startState()
         while mdp.isEnd(cur_state) is False:
+
             action = ql.getAction(cur_state)
+
             nxt_state = mdp.succesor(cur_state, action)
             reward = mdp.reward(cur_state, action, nxt_state)
             ql.updateQ(cur_state, action, reward, nxt_state)
@@ -199,3 +197,6 @@ if __name__ == '__main__':
 
     Q_table = simulate()
     pprint.pprint(Q_table, width=1)
+
+
+
