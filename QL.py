@@ -49,29 +49,36 @@ class MDP:
         return nxt_state
 
     def reward(self, state, action, next_state):
-
+        reward = 0
         if self.sim_student is not None:
             val, nxt_state_response_time = util.students(self.sim_student, next_state, self.problem)
         else:
             val, nxt_state_response_time = util.usr_input(self.problem)
 
-        reward = nxt_state_response_time - self.curr_state_response_time
+        response = nxt_state_response_time - self.curr_state_response_time
 
         self.curr_state_response_time = nxt_state_response_time
 
-        if self.sim_student is None:
-            if val == 'q':
+        if val == 'q':
+            if self.sim_student is None:
                 self.status = 'Quit'
-                return 0
+            return 0
 
-            if val == 'n':
+        if val == 'n':
+            reward = -abs(response)
+            if self.sim_student is None:
                 self.status = 'Next'
-                print("Next Question!")
-                reward =
+            print("Next Question!")
+
+        if val != 'q' and val != 'n':
             if int(val) == (self.problem[0] + self.problem[1]):
-                print("Correct! it took you " + str(int(reward)) + " seconds longer than the last problem!")
+                reward = response
+                if self.sim_student is None:
+                    print("Correct! it took you " + str(int(reward)) + " seconds longer than the last problem!")
             else:
-                print("Incorrect !it took you " + str(int(reward)) + " seconds longer than the last problem!")
+                reward = -abs(response)
+                if self.sim_student is None:
+                    print("Incorrect !it took you " + str(int(reward)) + " seconds longer than the last problem!")
 
         return reward
 
@@ -145,22 +152,24 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         episode_rewards.append(reward)
 
         if mdp.isEnd(cur_state) or (sum([abs(ql.Q[key] - Q_old[key]) for key in q_init]) < delta and train_mode):
-            if verbose:
-                print("----------------------------------------------")
-                print("Converged in: " + str(ql.num_iterations) + " iterations\n")
+
             break
 
         Q_old = copy.deepcopy(ql.Q)
 
     if verbose:
-        optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] > 0], reverse=True)
-        sub_optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] < 0], reverse=False)
+        print("----------------------------------------------")
+        if sim_student is not None:
+            print("Converged in: " + str(ql.num_iterations) + " iterations\n")
 
-        print("Optimal States:")
-        print(optimal_states)
+            optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] > 0], reverse=True)
+            sub_optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] < 0], reverse=False)
 
-        print("\nSub Optimal States:")
-        print(sub_optimal_states)
+            print("Optimal States:")
+            print(optimal_states)
+
+            print("\nSub Optimal States:")
+            print(sub_optimal_states)
 
         print("\nOptimal Policy")
         optimal_policy = ql.optimalPolicy()
@@ -178,8 +187,7 @@ if __name__ == '__main__':
     Q_table, episode_rewards = simulate(save_q_filename='q_student_wrong_answers.json',
                                         sim_student_filename='student_wrong_answers.json', train_mode=True)
 
-    #simulate(load_q_filename='q_student_wrong_answers.json',
-    #                                    sim_student_filename='random_test_student.json', train_mode=False, max_iter=100)
-
+    Q, a = simulate(load_q_filename='q_student_wrong_answers.json',
+                                        sim_student_filename='random_test_student.json', train_mode=False, max_iter=100)
     #Give it a try
-    #simulate(load_q_filename='q_student_wrong_answers.json', train_mode=False)
+    simulate(load_q_filename='q_student_wrong_answers.json', train_mode=False)
