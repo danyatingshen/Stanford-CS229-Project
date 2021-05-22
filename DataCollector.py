@@ -39,6 +39,7 @@ def main():
                 value.append(state_time)
             else:
                 print("Incorrect!")
+                value.append(state_time * (-1))
 
         result[problem] = value
         print("Next Level, result", result)
