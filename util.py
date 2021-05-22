@@ -15,6 +15,7 @@ def usr_input(problem):
 
     return val, response_time
 
+
 def students(student, state, problem):
     gauss = student[str(state)]
     response_time = random.gauss(gauss[0], gauss[1])
@@ -26,6 +27,7 @@ def students(student, state, problem):
         val = problem[0] + problem[1]
 
     return val, abs(response_time)
+
 
 # student is a dict with the distributions.....
 def load_student(load_student_filename):

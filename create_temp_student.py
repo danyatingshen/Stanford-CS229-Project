@@ -18,4 +18,4 @@ student.pop('state_limit', None)
 
 pprint.pprint(student, width=1)
 
-util.save_q("student_wrong_answers.json", student)
+util.save_q("rand_student.json", student)

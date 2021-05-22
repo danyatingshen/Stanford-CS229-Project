@@ -93,7 +93,7 @@ class QLearning:
     def __init__(self, mdp_actions, q_init, train_mode):
         self.actions = mdp_actions
         self.gamma = 0.95  # discount rate
-        self.epsilon = 0.4  # exploration rate
+        self.epsilon = 0.3  # exploration rate
         self.num_iterations = 0
         self.Q = q_init
         self.train_mode = train_mode
@@ -126,7 +126,7 @@ class QLearning:
 
 
 # Simulation
-def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=None, train_mode=True, delta=.001,
+def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=None, train_mode=True, delta=.0001,
              max_iter=100000, verbose=True):
     q_init = util.load_q(load_q_filename)
     sim_student = util.load_student(sim_student_filename)
@@ -152,7 +152,6 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         episode_rewards.append(reward)
 
         if mdp.isEnd(cur_state) or (sum([abs(ql.Q[key] - Q_old[key]) for key in q_init]) < delta and train_mode):
-
             break
 
         Q_old = copy.deepcopy(ql.Q)
@@ -184,10 +183,10 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
 if __name__ == '__main__':
     # Q_table = simulate(save_q_filename='q_test.json')
     # Q_table = simulate(load_q_filename='q_test.json')
-    Q_table, episode_rewards = simulate(save_q_filename='q_student_wrong_answers.json',
-                                        sim_student_filename='student_wrong_answers.json', train_mode=True)
+    Q_table, episode_rewards = simulate(save_q_filename='rand_student_q.json',
+                                        sim_student_filename='rand_student.json', train_mode=True)
 
-    Q, a = simulate(load_q_filename='q_student_wrong_answers.json',
-                                        sim_student_filename='random_test_student.json', train_mode=False, max_iter=100)
+    #Q, a = simulate(load_q_filename='q_student_wrong_answers.json',
+    #                                    sim_student_filename='random_test_student.json', train_mode=False, max_iter=100)
     #Give it a try
-    simulate(load_q_filename='q_student_wrong_answers.json', train_mode=False)
+    #simulate(load_q_filename='rand_student_q.json', train_mode=False)
