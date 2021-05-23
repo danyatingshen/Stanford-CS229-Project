@@ -1,4 +1,3 @@
-import json
 import random
 import time
 import ujson
@@ -14,11 +13,13 @@ def main():
     result = defaultdict(lambda: [])
 
     for problem in bins:
-        problemlst = bins[problem]
+        if problem == 'state_limit' or problem == "num_states":
+            continue
+        problem_lst = bins[problem]
         value = list()
         while len(value) != 4:
             try:
-                next = random.choice(problemlst)
+                next = random.choice(problem_lst)
             except TypeError:
                 continue
             prompt = "{} + {} = \n".format(next[0], next[1])
@@ -42,13 +43,17 @@ def main():
                 value.append(state_time * (-1))
 
         result[problem] = value
-        print("Next Level, result", result)
+        print("Next Level, result", result[problem])
 
+    print("Saving your result to file......")
     save_json(result, name)
+    print("Successfully save the file!")
 
-def save_json(dictionary,name):
-    with open("data_"+name+".txt", "w") as outfile:
+
+def save_json(dictionary, name):
+    with open("data_" + name + ".txt", "w") as outfile:
         ujson.dump(dictionary, outfile)
+
 
 if __name__ == '__main__':
     print(main())
