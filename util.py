@@ -20,7 +20,7 @@ def students(student, state, problem):
     gauss = student[str(state)]
     response_time = random.gauss(gauss[0], gauss[1])
 
-    if response_time < 0:
+    if random.random() < gauss[2]:
         #Make val an incorrect answer
         val = problem[0] + problem[1] + 1
     else:

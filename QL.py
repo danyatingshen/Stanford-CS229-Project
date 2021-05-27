@@ -126,7 +126,7 @@ class QLearning:
 
 
 # Simulation
-def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=None, train_mode=True, delta=.0001,
+def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=None, train_mode=True, delta=.001,
              max_iter=100000, verbose=True):
     q_init = util.load_q(load_q_filename)
     sim_student = util.load_student(sim_student_filename)
@@ -162,13 +162,9 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
             print("Converged in: " + str(ql.num_iterations) + " iterations\n")
 
             optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] > 0], reverse=True)
-            sub_optimal_states = sorted([(sim_student[key][0], key) for key in sim_student if sim_student[key][0] < 0], reverse=False)
 
             print("Optimal States:")
             print(optimal_states)
-
-            print("\nSub Optimal States:")
-            print(sub_optimal_states)
 
         print("\nOptimal Policy")
         optimal_policy = ql.optimalPolicy()
@@ -181,12 +177,13 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
 
 
 if __name__ == '__main__':
-    # Q_table = simulate(save_q_filename='q_test.json')
-    # Q_table = simulate(load_q_filename='q_test.json')
-    Q_table, episode_rewards = simulate(save_q_filename='rand_student_q.json',
-                                        sim_student_filename='rand_student.json', train_mode=True)
+    #simulate(sim_student_filename='student_cortney.json')
 
-    #Q, a = simulate(load_q_filename='q_student_wrong_answers.json',
-    #                                    sim_student_filename='random_test_student.json', train_mode=False, max_iter=100)
+    Q_table, episode_rewards = simulate(
+                                        sim_student_filename='student_cortney.json', train_mode=True)
+
+    #print(Q_table)
+    #Q, a = simulate(load_q_filename='student_takara_norm_q.json',
+    #                sim_student_filename='student_cortney.json', train_mode=False)
     #Give it a try
     #simulate(load_q_filename='rand_student_q.json', train_mode=False)

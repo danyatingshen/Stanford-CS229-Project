@@ -8,7 +8,7 @@ import pprint
 # Start Small and progressively increase the maxnum
 from random import random
 
-MAX_NUM = 99
+MAX_NUM = 999
 FEATURE_TUPLE_LIMIT = list()
 BASE_PROBLEM_KEY = ()
 bins = defaultdict(lambda: [])
