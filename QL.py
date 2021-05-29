@@ -97,6 +97,7 @@ class QLearning:
         self.num_iterations = 0
         self.Q = q_init
         self.train_mode = train_mode
+        self.tolerance = 0.01
 
     def getAction(self, state):
         self.num_iterations += 1
@@ -144,6 +145,14 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
     episode_rewards = []
 
     cur_state = mdp.start_state()
+
+    # iteration = iteration + 1
+    # value = mdp_data['value']
+    # new = mdp_data['reward'] + gamma * value.dot(transition_probs).max(axis=1)
+    # mdp_data['value'] = new
+    #
+    # if np.max(np.abs(value - new)) < tolerance:
+    #     break
     for _ in range(max_iter):
         action = ql.getAction(cur_state)
         nxt_state = mdp.successor(cur_state, action)
@@ -154,7 +163,7 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         episode_rewards.append(reward)
 
         #break criterion...
-        if mdp.isEnd(cur_state) or (sum([abs(ql.Q[key] - Q_old[key]) for key in q_init]) < delta and train_mode):
+        if mdp.isEnd(cur_state) or (max(abs(value - reward)) < mdp.tolerance and train_mode):
             break
 
         Q_old = copy.deepcopy(ql.Q)
