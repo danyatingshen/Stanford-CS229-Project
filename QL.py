@@ -135,9 +135,11 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
     mdp.sim_student = sim_student
     ql = QLearning(mdp.actions, q_init, train_mode)
 
+    #Change Here
     Q_old = copy.deepcopy(q_init)
     for key in Q_old:
         Q_old[key] = 10
+    #
 
     episode_rewards = []
 
@@ -151,6 +153,7 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         cur_state = nxt_state
         episode_rewards.append(reward)
 
+        #break criterion...
         if mdp.isEnd(cur_state) or (sum([abs(ql.Q[key] - Q_old[key]) for key in q_init]) < delta and train_mode):
             break
 
