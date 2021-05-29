@@ -146,13 +146,6 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
 
     cur_state = mdp.start_state()
 
-    # iteration = iteration + 1
-    # value = mdp_data['value']
-    # new = mdp_data['reward'] + gamma * value.dot(transition_probs).max(axis=1)
-    # mdp_data['value'] = new
-    #
-    # if np.max(np.abs(value - new)) < tolerance:
-    #     break
     for _ in range(max_iter):
         action = ql.getAction(cur_state)
         nxt_state = mdp.successor(cur_state, action)
