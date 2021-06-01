@@ -144,6 +144,7 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
     episode_rewards = []
 
     cur_state = mdp.start_state()
+    consecutive_counter = 0
     for _ in range(max_iter):
         action = ql.getAction(cur_state)
         nxt_state = mdp.successor(cur_state, action)
@@ -153,10 +154,15 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         cur_state = nxt_state
         episode_rewards.append(reward)
 
-        #break criterion...
-        if mdp.isEnd(cur_state) or (sum([abs(ql.Q[key] - Q_old[key]) for key in q_init]) < delta and train_mode):
-            break
+        ea = max([abs(ql.Q[key] - Q_old[key]) / (Q_old[key] if Q_old[key] != 0 else 1) for key in ql.Q])
 
+        if ea < .01:
+            consecutive_counter += 1
+        else:
+            consecutive_counter = 0
+
+        if mdp.isEnd(cur_state) or consecutive_counter >= 5 and train_mode:
+            break
         Q_old = copy.deepcopy(ql.Q)
 
     if verbose:
