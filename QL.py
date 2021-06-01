@@ -155,12 +155,9 @@ def simulate(load_q_filename=None, save_q_filename=None, sim_student_filename=No
         cur_state = nxt_state
         episode_rewards.append(reward)
 
-        #break criterion...
+        ea = max([abs(ql.Q[key] - Q_old[key])/(Q_old[key] if Q_old[key] != 0 else 1) for key in ql.Q])
 
-        #max([abs(ql.Q[key] - Q_old[key]) for key in Q_old])
-        ea = max([abs(ql.Q[key] - Q_old[key]) for key in ql.Q])
-
-        if ea < .05:
+        if ea < .01:
             consecutive_counter += 1
         else:
             consecutive_counter = 0
