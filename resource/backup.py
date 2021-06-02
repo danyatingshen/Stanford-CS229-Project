@@ -10,17 +10,9 @@ import pprint
 import util
 from SimulatedStudent import student1
 
-
-#class Problem:
-#    def __init__(self, x: int, y: int):
-#        self.x = x
-#        self.y = y
-#        self.operation = 'operation'
-
-
 class MDP:
     def __init__(self):
-        self.bins = json.load(open('problemBank.txt', 'r'))
+        self.bins = json.load(open('../data/problemBank.txt', 'r'))
         self.FEATURE_TUPLE_LIMIT = self.bins['state_limit']
         self.num_states = self.bins['num_states']
         self.BASE_PROBLEM_KEY = tuple([-1] * self.num_states)

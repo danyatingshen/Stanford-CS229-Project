@@ -2,11 +2,6 @@ import json
 from collections import defaultdict
 import math
 import ujson
-import pprint
-
-# For two , four digit numbers, there are a total of (10,0000)^2 permutations of problems
-# Start Small and progressively increase the maxnum
-from random import random
 
 MAX_NUM = 999
 FEATURE_TUPLE_LIMIT = list()
@@ -25,15 +20,15 @@ def num_carry_ops(val_1, val_2):
     carry_val = 0
     carry_count = 0
 
-    while (i < len(num1_str) or j < len(num2_str)):
+    while i < len(num1_str) or j < len(num2_str):
         x = 0
         y = 0
 
-        if (i < len(num1_str)):
+        if i < len(num1_str):
             x = int(num1_str[i])  # + int('0');
             i += 1
 
-        if (j < len(num2_str)):
+        if j < len(num2_str):
             y = int(num2_str[j])  # + int('0');
             j += 1
 
@@ -64,7 +59,7 @@ def non_trailing_zero_count(val_1, val_2):
     trail_2 = len(num2_str) - len(num2_str.rstrip('0'))
 
     return ((len(num1_str) - trail_1) == 1 and (
-                len(num2_str) - trail_2) == 1 and val_1 != 0 and val_2 != 0 and total_zero_1 != 0 and total_zero_2 != 0)
+            len(num2_str) - trail_2) == 1 and val_1 != 0 and val_2 != 0 and total_zero_1 != 0 and total_zero_2 != 0)
 
 
 def feature_extractor(val_1, val_2):
@@ -106,7 +101,7 @@ def generate_bins_and_constants():
     return bins, FEATURE_TUPLE_LIMIT
 
 
-def show_statis():
+def show_stats():
     # Bin statistics
     print("Total number of math problems: " + str((MAX_NUM + 1) ** 2))
     print("Total number of bins: " + str(len(bins)))
@@ -119,12 +114,12 @@ def show_statis():
 
 
 def save_json(dictionary):
-    with open("problemBank.json", "w") as outfile:
+    with open("data/problemBank.json", "w") as outfile:
         ujson.dump(dictionary, outfile)
 
 
 def load_json():
-    return json.load(open('problemBank.json', 'r'))
+    return json.load(open('data/problemBank.json', 'r'))
 
 
 def main():
@@ -139,5 +134,7 @@ def main():
         print(bins[key])
 
     save_json(bins)
+
+
 if __name__ == '__main__':
     main()

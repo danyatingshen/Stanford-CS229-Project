@@ -3,6 +3,7 @@ import collections
 import ujson
 import random
 
+
 def usr_input(problem):
     prompt = "{} + {} = \n".format(problem[0], problem[1])
     start_time = time.time()
@@ -21,7 +22,7 @@ def students(student, state, problem):
     response_time = random.gauss(gauss[0], gauss[1])
 
     if random.random() < gauss[2]:
-        #Make val an incorrect answer
+        # Make val an incorrect answer
         val = problem[0] + problem[1] + 1
     else:
         val = problem[0] + problem[1]
@@ -50,4 +51,3 @@ def save_q(save_q_filename, q_dict):
     if save_q_filename is not None:
         with open(save_q_filename, "w") as outfile:
             ujson.dump(q_dict, outfile)
-

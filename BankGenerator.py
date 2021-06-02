@@ -6,16 +6,18 @@ from csv import reader
 KEY = "key"
 VALUES = "values"
 
+
 def import_feature_to_bank():
-    dict = FeatureExtractor.bins
-    w = csv.writer(open("problemBank.csv", "w"))
-    for key, val in dict.items():
+    dict_map = FeatureExtractor.bins
+    w = csv.writer(open("data/problemBank.csv", "w"))
+    for key, val in dict_map.items():
         w.writerow([key, val])
+
 
 def update_feature_metrics():
     # open file in read mode
     csv.field_size_limit(sys.maxsize)
-    with open('problemBank.csv', 'r') as read_obj:
+    with open('data/problemBank.csv', 'r') as read_obj:
         # pass the file object to reader() to get the reader object
         csv_reader = reader(read_obj)
         # Iterate over each row in the csv using reader object
@@ -24,10 +26,9 @@ def update_feature_metrics():
             print(row[0])
 
 
-def main() :
-    # Uncommon if need to reimport - Oneoff Job
-    # import_feature_to_bank()
-
+def main():
     update_feature_metrics()
 
-main()
+
+if __name__ == '__main__':
+    main()

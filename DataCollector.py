@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 def main():
-    bins = ujson.load(open('problemBank.txt', 'r'))
+    bins = ujson.load(open('data/problemBank.txt', 'r'))
     val = ""
     while val == "":
         val = input("Type your name so I can save your result and differentiate from other:")
