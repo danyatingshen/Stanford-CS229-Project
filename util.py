@@ -3,7 +3,6 @@ import collections
 import ujson
 import random
 
-
 def usr_input(problem):
     prompt = "{} + {} = \n".format(problem[0], problem[1])
     start_time = time.time()
@@ -30,7 +29,6 @@ def students(student, state, problem):
     return val, abs(response_time)
 
 
-# student is a dict with the distributions.....
 def load_student(load_student_filename):
     if load_student_filename is not None:
         student = ujson.load(open(load_student_filename, 'r'))

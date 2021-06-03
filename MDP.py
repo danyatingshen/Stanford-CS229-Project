@@ -1,12 +1,12 @@
-
 import operator
 import random
 import ujson
 import util
 
+
 class MDP:
     def __init__(self):
-        self.bins = ujson.load(open('data/problemBank.json', 'r'))
+        self.bins = ujson.load(open('data\problemBank.json', 'r'))
         self.FEATURE_TUPLE_LIMIT = self.bins['state_limit']
         self.num_states = self.bins['num_states']
         self.BASE_PROBLEM_KEY = tuple([-1] * self.num_states)
@@ -75,7 +75,7 @@ class MDP:
             else:
                 reward = -abs(response)
                 if self.sim_student is None:
-                    print("Incorrect !it took you " + str(int(reward)) + " seconds longer than the last problem!")
+                    print("Incorrect! it took you " + str(int(reward)) + " seconds longer than the last problem!")
 
         return reward
 
@@ -84,4 +84,3 @@ class MDP:
             return True
         else:
             return False
-

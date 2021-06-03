@@ -1,16 +1,16 @@
 import ast
 import math
-from random import random
+import random
 
 
 class QLearning:
-    def __init__(self, mdp_actions, q_init, train_mode):
+    def __init__(self, mdp_actions, q_init, step_mode):
         self.actions = mdp_actions
         self.gamma = 0.95  # discount rate
         self.epsilon = 0.3  # exploration rate
         self.num_iterations = 0
         self.Q = q_init
-        self.train_mode = train_mode
+        self.step_mode = step_mode
 
     def getAction(self, state):
         self.num_iterations += 1
@@ -20,7 +20,7 @@ class QLearning:
             return max((self.Q[str((state, a))], a) for a in self.actions(state))[1]
 
     def stepsize(self):
-        if self.train_mode:
+        if self.step_mode == 'decay':
             return 1 / math.sqrt(self.num_iterations)
         else:
             return .5
