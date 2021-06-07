@@ -10,7 +10,6 @@ class MDP:
         self.FEATURE_TUPLE_LIMIT = self.bins['state_limit']
         self.num_states = self.bins['num_states']
         self.BASE_PROBLEM_KEY = tuple([-1] * self.num_states)
-        self.number_of_passed = 1
         self.problem = None
         self.curr_state_response_time = 0
 
@@ -42,7 +41,6 @@ class MDP:
     def successor(self, state, action):
         nxt_state = tuple(map(operator.add, state, action))
         self.problem = random.choice(self.bins[str(nxt_state)])
-        self.number_of_passed += 1
         return nxt_state
 
     def reward(self, state, action, next_state):

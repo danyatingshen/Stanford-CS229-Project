@@ -132,8 +132,11 @@ def experiment2(load_student, sim_student, runs):
 
 if __name__ == '__main__':
 
-    # give it a try!
-    simulate(load_q_filename='data/combined_takara_cortney_normalzied.json', step_mode="const", verbose=False)
+    # give it a try! Pre-trained
+    #simulate(load_q_filename='data/combined_takara_cortney_normalzied.json', step_mode="const", verbose=False)
+
+    # start fresh!
+    simulate(step_mode="const", verbose=False)
 
     # Experiment 1 ##################################################
     """
